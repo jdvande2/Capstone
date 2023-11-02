@@ -15,6 +15,8 @@ from tkinter import ttk
 import PIL
 from PIL import ImageTk, Image, ImageDraw
 
+import random
+
 
 class FrontEnd:
     def __init__(self, root):
@@ -194,13 +196,15 @@ class FrontEnd:
 
             with new_image as canvas:
                 paint = ImageDraw.Draw(canvas)
-                i = 1
+                i = 0
                 while i < int(float(h_line_get())):
-                    paint.line((self.aspect_x / i, 0, self.aspect_x / i, self.aspect_y), fill=128)
+                    random_pos = random.randrange(1, self.aspect_y)
+                    paint.line((0, random_pos, self.aspect_x, random_pos), fill=128)
                     i += 1
                 j = 1
                 while j < int(float(v_line_get())):
-                    paint.line((0, self.aspect_y / j, self.aspect_x, self.aspect_y / j), fill=128)
+                    random_pos = random.randrange(1, self.aspect_x)
+                    paint.line((random_pos, 0, random_pos, self.aspect_y), fill=128)
                     j += 1
 
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
