@@ -173,10 +173,25 @@ class FrontEnd:
         self.vLineSliderReading.grid(row=1, column=2, padx=110, pady=(73, 0), sticky=NW)
         # *** Vertical Lines ***
 
-        # ** Future Parameters **
-        self.renameMe = Label(self.master, text="Add new parameters here later:")
-        self.renameMe.configure(background='LightGrey')
-        self.renameMe.grid(row=1, column=2, padx=0, pady=(100, 0), sticky=NW)
+        # ** Color Distribution **
+        self.cdSliderText = Label(self.master, text="Color Distribution:")
+        self.cdSliderText.configure(background='LightGrey')
+        self.cdSliderText.grid(row=1, column=2, padx=0, pady=(100, 0), sticky=NW)
+
+        def cd_get():
+            return '{: .2f}'.format(color_dist.get())
+
+        def cd_changed(event):
+            self.cdSliderReading.configure(text=cd_get())
+
+        color_dist = tkinter.IntVar()
+        self.cdDisplay = ttk.Scale(self.master, from_=0, to=10, orient='horizontal', variable=color_dist,
+                                   command=cd_changed)
+        self.cdDisplay.grid(row=1, column=2, padx=3, pady=(120,0), sticky=NW)
+
+        self.cdSliderReading = Label(self.master, text=cd_get())
+        self.cdSliderReading.configure(background='LightGrey')
+        self.cdSliderReading.grid(row=1, column=2, padx=110, pady=(123, 0), sticky=NW)
 
         # **** PARAMETERS ****
 
@@ -196,6 +211,14 @@ class FrontEnd:
 
             with new_image as canvas:
                 paint = ImageDraw.Draw(canvas)
+                # Create color list and populate it
+                color_list = [(45, 45, 46), (179, 34, 48), (42, 66, 106), (164, 167, 209), (240, 211, 45)]
+                i = 0
+                while i < 5:
+                    color_list.append(((random.randrange(0, 255)), (random.randrange(0, 255)),
+                                                                 (random.randrange(0, 255))))
+                    i += 1
+
                 # Runs if 1 or more lines are selected
                 if 1 == int(float(h_line_get())) or int(float(h_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_y)
@@ -206,25 +229,26 @@ class FrontEnd:
 
                 i = 1
                 j = 1
-                # Generates rectangles/squares based on the line count selected
+                # Generates rectangles/squares and lines based on the line count selected
                 while i < int(float(h_line_get())) or j < int(float(v_line_get())):
                     random_pos_x = random.randrange(1,self.aspect_x)
                     random_pos_y = random.randrange(1,self.aspect_y)
                     random_pos_x_2 = random_pos_x + random.randrange(5,100)
                     random_pos_y_2 = random_pos_y + random.randrange(5, 100)
-                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2), fill=128, outline=128)
+                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2), fill=color_list[random.randrange(0,int(float(cd_get())))],
+                                    outline=128)
 
                     if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=128)
+                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=(0, 0, 0))
                         i += 1
                     if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=128)
+                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=(0, 0, 0))
                         i += 1
                     if j < int(float(v_line_get())):
-                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=128)
+                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=(0, 0, 0))
                         j += 1
                     if j < int(float(v_line_get())):
-                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=128)
+                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=(0, 0, 0))
                         j += 1
 
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
