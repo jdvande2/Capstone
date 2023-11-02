@@ -196,7 +196,7 @@ class FrontEnd:
 
             with new_image as canvas:
                 paint = ImageDraw.Draw(canvas)
-
+                # Runs if 1 or more lines are selected
                 if 1 == int(float(h_line_get())) or int(float(h_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_y)
                     paint.line((0, random_pos, self.aspect_x, random_pos), fill=128)
@@ -206,6 +206,7 @@ class FrontEnd:
 
                 i = 1
                 j = 1
+                # Generates rectangles/squares based on the line count selected
                 while i < int(float(h_line_get())) or j < int(float(v_line_get())):
                     random_pos_x = random.randrange(1,self.aspect_x)
                     random_pos_y = random.randrange(1,self.aspect_y)
