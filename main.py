@@ -173,7 +173,7 @@ class FrontEnd:
         self.vLineSliderReading.grid(row=1, column=2, padx=110, pady=(73, 0), sticky=NW)
         # *** Vertical Lines ***
 
-        # ** Color Distribution **
+        # ** Line Thickness **
         self.cdSliderText = Label(self.master, text="Color Distribution:")
         self.cdSliderText.configure(background='LightGrey')
         self.cdSliderText.grid(row=1, column=2, padx=0, pady=(100, 0), sticky=NW)
@@ -192,6 +192,28 @@ class FrontEnd:
         self.cdSliderReading = Label(self.master, text=cd_get())
         self.cdSliderReading.configure(background='LightGrey')
         self.cdSliderReading.grid(row=1, column=2, padx=110, pady=(123, 0), sticky=NW)
+
+        # *** Line Thickness ***
+        # also known as the thicc boi parameter
+
+        self.ltSliderText = Label(self.master, text="Line Thickness:")
+        self.ltSliderText.configure(background='LightGrey')
+        self.ltSliderText.grid(row=1, column=2, padx=0, pady=(150, 0), sticky=NW)
+
+        def lt_get():
+            return '{: .2f}'.format(line_thickness.get())
+
+        def lt_changed(event):
+            self.ltSliderReading.configure(text=lt_get())
+
+        line_thickness = tkinter.IntVar()
+        self.ltDisplay = ttk.Scale(self.master, from_=0, to=20, orient='horizontal', variable=line_thickness,
+                                   command=lt_changed)
+        self.ltDisplay.grid(row=1, column=2, padx=3, pady=(170, 0), sticky=NW)
+
+        self.ltSliderReading = Label(self.master, text=lt_get())
+        self.ltSliderReading.configure(background='LightGrey')
+        self.ltSliderReading.grid(row=1, column=2, padx=110, pady=(173, 0), sticky=NW)
 
         # **** PARAMETERS ****
 
@@ -222,10 +244,10 @@ class FrontEnd:
                 # Runs if 1 or more lines are selected
                 if 1 == int(float(h_line_get())) or int(float(h_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_y)
-                    paint.line((0, random_pos, self.aspect_x, random_pos), fill=128)
+                    paint.line((0, random_pos, self.aspect_x, random_pos), fill=(0, 0, 0), width=int(float(lt_get())))
                 if 1 == int(float(v_line_get())) or int(float(v_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_x)
-                    paint.line((random_pos, 0, random_pos, self.aspect_y), fill=128)
+                    paint.line((random_pos, 0, random_pos, self.aspect_y), fill=(0, 0, 0), width=int(float(lt_get())))
 
                 i = 1
                 j = 1
@@ -235,20 +257,25 @@ class FrontEnd:
                     random_pos_y = random.randrange(1,self.aspect_y)
                     random_pos_x_2 = random_pos_x + random.randrange(5,100)
                     random_pos_y_2 = random_pos_y + random.randrange(5, 100)
-                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2), fill=color_list[random.randrange(0,int(float(cd_get())))],
-                                    outline=128)
+                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2),
+                                    fill=color_list[random.randrange(0, int(float(cd_get())))],
+                                    outline=(0, 0, 0), width=int(float(lt_get())))
 
                     if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=(0, 0, 0))
+                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=(0, 0, 0),
+                                   width=int(float(lt_get())))
                         i += 1
                     if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=(0, 0, 0))
+                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=(0, 0, 0),
+                                   width=int(float(lt_get())))
                         i += 1
                     if j < int(float(v_line_get())):
-                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=(0, 0, 0))
+                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=(0, 0, 0),
+                                   width=int(float(lt_get())))
                         j += 1
                     if j < int(float(v_line_get())):
-                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=(0, 0, 0))
+                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=(0, 0, 0),
+                                   width=int(float(lt_get())))
                         j += 1
 
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
