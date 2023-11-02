@@ -196,16 +196,35 @@ class FrontEnd:
 
             with new_image as canvas:
                 paint = ImageDraw.Draw(canvas)
-                i = 0
-                while i < int(float(h_line_get())):
+
+                if 1 == int(float(h_line_get())) or int(float(h_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_y)
                     paint.line((0, random_pos, self.aspect_x, random_pos), fill=128)
-                    i += 1
-                j = 1
-                while j < int(float(v_line_get())):
+                if 1 == int(float(v_line_get())) or int(float(v_line_get())) > 1:
                     random_pos = random.randrange(1, self.aspect_x)
                     paint.line((random_pos, 0, random_pos, self.aspect_y), fill=128)
-                    j += 1
+
+                i = 1
+                j = 1
+                while i < int(float(h_line_get())) or j < int(float(v_line_get())):
+                    random_pos_x = random.randrange(1,self.aspect_x)
+                    random_pos_y = random.randrange(1,self.aspect_y)
+                    random_pos_x_2 = random_pos_x + random.randrange(5,100)
+                    random_pos_y_2 = random_pos_y + random.randrange(5, 100)
+                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2), fill=128, outline=128)
+
+                    if i < int(float(h_line_get())):
+                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=128)
+                        i += 1
+                    if i < int(float(h_line_get())):
+                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=128)
+                        i += 1
+                    if j < int(float(v_line_get())):
+                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=128)
+                        j += 1
+                    if j < int(float(v_line_get())):
+                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=128)
+                        j += 1
 
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
             self.imageTest = Label(self.master, image=self.photoImageNewImage)
