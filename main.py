@@ -173,7 +173,7 @@ class FrontEnd:
         self.vLineSliderReading.grid(row=1, column=2, padx=110, pady=(73, 0), sticky=NW)
         # *** Vertical Lines ***
 
-        # ** Line Thickness **
+        # ** Color Distribution **
         self.cdSliderText = Label(self.master, text="Color Distribution:")
         self.cdSliderText.configure(background='LightGrey')
         self.cdSliderText.grid(row=1, column=2, padx=0, pady=(100, 0), sticky=NW)
@@ -185,7 +185,7 @@ class FrontEnd:
             self.cdSliderReading.configure(text=cd_get())
 
         color_dist = tkinter.IntVar()
-        self.cdDisplay = ttk.Scale(self.master, from_=0, to=10, orient='horizontal', variable=color_dist,
+        self.cdDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=color_dist,
                                    command=cd_changed)
         self.cdDisplay.grid(row=1, column=2, padx=3, pady=(120,0), sticky=NW)
 
@@ -196,9 +196,9 @@ class FrontEnd:
         # *** Line Thickness ***
         # also known as the thicc boi parameter
 
-        self.ltSliderText = Label(self.master, text="Line Thickness:")
-        self.ltSliderText.configure(background='LightGrey')
-        self.ltSliderText.grid(row=1, column=2, padx=0, pady=(150, 0), sticky=NW)
+        self.lsSliderText = Label(self.master, text="Line Thickness:")
+        self.lsSliderText.configure(background='LightGrey')
+        self.lsSliderText.grid(row=1, column=2, padx=0, pady=(150, 0), sticky=NW)
 
         def lt_get():
             return '{: .2f}'.format(line_thickness.get())
@@ -214,6 +214,27 @@ class FrontEnd:
         self.ltSliderReading = Label(self.master, text=lt_get())
         self.ltSliderReading.configure(background='LightGrey')
         self.ltSliderReading.grid(row=1, column=2, padx=110, pady=(173, 0), sticky=NW)
+
+        # *** Line Spacing ***
+
+        self.lsSliderText = Label(self.master, text="Line Spacing:")
+        self.lsSliderText.configure(background='LightGrey')
+        self.lsSliderText.grid(row=1, column=2, padx=0, pady=(200, 0), sticky=NW)
+
+        def ls_get():
+            return '{: .2f}'.format(line_spacing.get())
+
+        def ls_changed(event):
+            self.lsSliderReading.configure(text=ls_get())
+
+        line_spacing = tkinter.IntVar()
+        self.lsDisplay = ttk.Scale(self.master, from_=0, to=50, orient='horizontal', variable=line_spacing,
+                                   command=ls_changed)
+        self.lsDisplay.grid(row=1, column=2, padx=3, pady=(220, 0), sticky=NW)
+
+        self.lsSliderReading = Label(self.master, text=ls_get())
+        self.lsSliderReading.configure(background='LightGrey')
+        self.lsSliderReading.grid(row=1, column=2, padx=110, pady=(223, 0), sticky=NW)
 
         # **** PARAMETERS ****
 
@@ -231,28 +252,108 @@ class FrontEnd:
             delete_image()
             new_image = PIL.Image.new("RGB", (self.aspect_x, self.aspect_y), color=(255, 255, 255))
 
-            with new_image as canvas:
+            with (new_image as canvas):
                 paint = ImageDraw.Draw(canvas)
-                # Create color list and populate it
-                color_list = [(45, 45, 46), (179, 34, 48), (42, 66, 106), (164, 167, 209), (240, 211, 45)]
+                # *** Create color list and populate it ***
+                # First six colors are colors from Mondrian's original works always
+                color_list = [(45, 45, 46), (179, 34, 48), (42, 66, 106), (164, 167, 209), (240, 211, 45), (255, 255,
+                                                                                                            255)]
                 i = 0
-                while i < 5:
+                while i < 4:
                     color_list.append(((random.randrange(0, 255)), (random.randrange(0, 255)),
                                                                  (random.randrange(0, 255))))
                     i += 1
 
-                # Runs if 1 or more lines are selected
-                if 1 == int(float(h_line_get())) or int(float(h_line_get())) > 1:
-                    random_pos = random.randrange(1, self.aspect_y)
-                    paint.line((0, random_pos, self.aspect_x, random_pos), fill=(0, 0, 0), width=int(float(lt_get())))
-                if 1 == int(float(v_line_get())) or int(float(v_line_get())) > 1:
-                    random_pos = random.randrange(1, self.aspect_x)
-                    paint.line((random_pos, 0, random_pos, self.aspect_y), fill=(0, 0, 0), width=int(float(lt_get())))
+                # *** Generate Lines ***
 
-                i = 1
-                j = 1
+                paint.line((10, 10, self.aspect_x-10, 10), fill=(0, 0, 0), width=int(float(lt_get())))
+                paint.line((10, self.aspect_y - 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
+                           width=int(float(lt_get())))
+                paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 0), width=int(float(lt_get())))
+                paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
+                           width=int(float(lt_get())))
+
+                i = 0
+                while i < int(float(h_line_get())):
+                    random_pos = random.randrange(10, self.aspect_y - 10)
+                    paint.line((10, random_pos, self.aspect_x - 10, random_pos), fill=(0, 0, 0), width=int(float(lt_get())))
+                    i += 1
+                i = 0
+                while i < int(float(v_line_get())):
+                    random_pos = random.randrange(10, self.aspect_x - 10)
+                    paint.line((random_pos, 10, random_pos, self.aspect_y - 10), fill=(0, 0, 0), width=int(float(lt_get())))
+                    i += 1
+
+                # *** Detect Rectangles and apply color ***
+
+
+                point_x = self.aspect_x - 10
+                point_y = self.aspect_y - 10
+
+                x_1 = 0
+                x_2 = 0
+                y_1 = 0
+                y_2 = 0
+
+                while point_x != 10 or point_y != 10:
+                    # Save coordinate of top right rectangle
+                    x_1 = point_x
+                    y_1 = point_y
+                    total_x = 0
+                    total_y = 0
+
+                    # Navigate to top left of rectangle
+                    point_x -= 1
+                    while new_image.getpixel((point_x, point_y + 1)) != (0, 0, 0) and new_image.getpixel(
+                            (point_x, point_y - 1)) != (0, 0, 0):
+                        point_x -= 1
+                        total_x += 1
+                    print(total_x)
+                    total_x = 0
+                    total_y = 0
+                    # Navigate to bottom left of rectangle
+                    point_y -= 1
+                    while new_image.getpixel((point_x+1, point_y)) != (0, 0, 0) and new_image.getpixel(
+                            (point_x-1, point_y)) != (0, 0, 0):
+                        point_y -= 1
+                        total_y += 1
+                    print(total_y)
+                    total_x = 0
+                    total_y = 0
+
+                    # Save coordinate of bottom left rectangle
+                    x_2 = point_x
+                    y_2 = point_y
+
+                    paint.rectangle((x_2, y_2, x_1, y_1), fill=color_list[random.randrange(0, int(float(cd_get())))],
+                                    outline=(0, 0, 0), width=int(float(lt_get())))
+
+                    # Navigate to bottom right of rectangle
+                    point_x += 1
+                    while new_image.getpixel((point_x, point_y + 1)) != (0, 0, 0) and new_image.getpixel(
+                            (point_x, point_y - 1)) != (0, 0, 0):
+                        point_x += 1
+                        total_x += 1
+                    print(total_x)
+                    total_x = 0
+                    total_y = 0
+                    print("Complete")
+
+                    if point_y == 10 and point_x != 10:
+                        print("Executed")
+                        # Navigate back to bottom left of rectangle
+                        point_x -= 1
+                        while new_image.getpixel((point_x, point_y + 1)) != (0, 0, 0) and new_image.getpixel(
+                                (point_x, point_y - 1)) != (0, 0, 0):
+                            point_x -= 1
+                        # Reset to top right of new rectangle set
+                        while point_y != self.aspect_y - 10:
+                            point_y += 1
+                        print("Complete Column")
+                # i = 1
+                # j = 1
                 # Generates rectangles/squares and lines based on the line count selected
-                while i < int(float(h_line_get())) or j < int(float(v_line_get())):
+                """while i < int(float(h_line_get())) or j < int(float(v_line_get())):
                     random_pos_x = random.randrange(1,self.aspect_x)
                     random_pos_y = random.randrange(1,self.aspect_y)
                     random_pos_x_2 = random_pos_x + random.randrange(5,100)
@@ -277,7 +378,7 @@ class FrontEnd:
                         paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=(0, 0, 0),
                                    width=int(float(lt_get())))
                         j += 1
-
+"""""
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
             self.imageTest = Label(self.master, image=self.photoImageNewImage)
             self.imageTest.grid(row=1, column=1, padx=20, pady=(0, 0), sticky=W)
