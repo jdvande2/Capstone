@@ -187,11 +187,13 @@ class FrontEnd:
         color_dist = tkinter.IntVar()
         self.cdDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=color_dist,
                                    command=cd_changed)
-        self.cdDisplay.grid(row=1, column=2, padx=3, pady=(120,0), sticky=NW)
+        self.cdDisplay.grid(row=1, column=2, padx=3, pady=(120, 0), sticky=NW)
 
         self.cdSliderReading = Label(self.master, text=cd_get())
         self.cdSliderReading.configure(background='LightGrey')
         self.cdSliderReading.grid(row=1, column=2, padx=110, pady=(123, 0), sticky=NW)
+
+        self.cdDisplay.set(5)
 
         # *** Line Thickness ***
         # also known as the thicc boi parameter
@@ -215,9 +217,11 @@ class FrontEnd:
         self.ltSliderReading.configure(background='LightGrey')
         self.ltSliderReading.grid(row=1, column=2, padx=110, pady=(173, 0), sticky=NW)
 
+        self.ltDisplay.set(5)
+
         # *** Line Spacing ***
 
-        self.lsSliderText = Label(self.master, text="Line Spacing:")
+        self.lsSliderText = Label(self.master, text="Minimum Line Spacing:")
         self.lsSliderText.configure(background='LightGrey')
         self.lsSliderText.grid(row=1, column=2, padx=0, pady=(200, 0), sticky=NW)
 
@@ -228,13 +232,15 @@ class FrontEnd:
             self.lsSliderReading.configure(text=ls_get())
 
         line_spacing = tkinter.IntVar()
-        self.lsDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=line_spacing,
+        self.lsDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=line_spacing,
                                    command=ls_changed)
         self.lsDisplay.grid(row=1, column=2, padx=3, pady=(220, 0), sticky=NW)
 
         self.lsSliderReading = Label(self.master, text=ls_get())
         self.lsSliderReading.configure(background='LightGrey')
         self.lsSliderReading.grid(row=1, column=2, padx=110, pady=(223, 0), sticky=NW)
+
+        self.lsDisplay.set(5)
 
         # **** PARAMETERS ****
 
@@ -266,24 +272,24 @@ class FrontEnd:
 
                 # *** Generate Lines ***
 
-                paint.line((10, 10, self.aspect_x-10, 10), fill=(0, 0, 0), width=int(float(lt_get())))
+                paint.line((10, 10, self.aspect_x-10, 10), fill=(0, 0, 0), width=1)
                 paint.line((10, self.aspect_y - 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
-                           width=int(float(lt_get())))
-                paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 0), width=int(float(lt_get())))
+                           width=1)
+                paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 0), width=1)
                 paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
-                           width=int(float(lt_get())))
+                           width=1)
 
                 i = 0
                 while i < int(float(h_line_get())):
                     random_pos = random.randrange(10, self.aspect_y - 10)
                     paint.line((10, random_pos, self.aspect_x - 10, random_pos),
-                               fill=(0, 0, 0), width=int(float(lt_get())))
+                               fill=(0, 0, 0), width=1)
                     i += 1
                 i = 0
                 while i < int(float(v_line_get())):
                     random_pos = random.randrange(10, self.aspect_x - 10)
                     paint.line((random_pos, 10, random_pos, self.aspect_y - 10),
-                               fill=(0, 0, 0), width=int(float(lt_get())))
+                               fill=(0, 0, 0), width=1)
                     i += 1
 
                 # *** Detect Rectangles and apply color ***
@@ -331,35 +337,7 @@ class FrontEnd:
                         # Position at top of next rectangle set
                         while point_y != 10:
                             point_y -= 1
-                # i = 1
-                # j = 1
-                # Generates rectangles/squares and lines based on the line count selected
-                """while i < int(float(h_line_get())) or j < int(float(v_line_get())):
-                    random_pos_x = random.randrange(1,self.aspect_x)
-                    random_pos_y = random.randrange(1,self.aspect_y)
-                    random_pos_x_2 = random_pos_x + random.randrange(5,100)
-                    random_pos_y_2 = random_pos_y + random.randrange(5, 100)
-                    paint.rectangle((random_pos_x, random_pos_y, random_pos_x_2, random_pos_y_2),
-                                    fill=color_list[random.randrange(0, int(float(cd_get())))],
-                                    outline=(0, 0, 0), width=int(float(lt_get())))
 
-                    if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y, self.aspect_x, random_pos_y), fill=(0, 0, 0),
-                                   width=int(float(lt_get())))
-                        i += 1
-                    if i < int(float(h_line_get())):
-                        paint.line((0, random_pos_y_2, self.aspect_x, random_pos_y_2), fill=(0, 0, 0),
-                                   width=int(float(lt_get())))
-                        i += 1
-                    if j < int(float(v_line_get())):
-                        paint.line((random_pos_x, 0, random_pos_x, self.aspect_y), fill=(0, 0, 0),
-                                   width=int(float(lt_get())))
-                        j += 1
-                    if j < int(float(v_line_get())):
-                        paint.line((random_pos_x_2, 0, random_pos_x_2, self.aspect_y), fill=(0, 0, 0),
-                                   width=int(float(lt_get())))
-                        j += 1
-"""
             self.photoImageNewImage = ImageTk.PhotoImage(new_image)
             self.imageTest = Label(self.master, image=self.photoImageNewImage)
             self.imageTest.grid(row=1, column=1, padx=20, pady=(0, 0), sticky=W)
