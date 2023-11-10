@@ -16,6 +16,7 @@ import PIL
 from PIL import ImageTk, Image, ImageDraw
 
 import random
+from TestInterface import TestInterface
 
 
 class FrontEnd:
@@ -355,5 +356,5 @@ class FrontEnd:
 
 if __name__ == '__main__':
     tkRoot = Tk()
-    aiArtGui = FrontEnd(tkRoot)
+    aiArtGui = TestInterface(tkRoot)
     tkRoot.mainloop()
