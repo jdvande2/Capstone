@@ -18,9 +18,9 @@ class TestInterface(tkinter.Frame):
         self.img = None
         self.parent = parent
 
-        self.parent.title("Local")
-        self.parent.geometry("1250x500")
-        self.parent.configure(background='LightGrey')
+        #self.parent.title("local")
+        #self.parent.geometry("1250x500")
+        #self.parent.configure(background='LightGrey')
 
         self.overallSettingsLabel = Label(self.master, text="Image settings:")
 
@@ -47,7 +47,7 @@ class TestInterface(tkinter.Frame):
         self.h_line = tkinter.IntVar()  # variable defining number of horizontal lines
         self.hLineSliderText = Label(self.master, text="Number of horizontal lines:")
 
-        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.h_line,
+        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=30, orient='horizontal', variable=self.h_line,
                                       command=self.h_line_changed)
         self.hLineSliderReading = Label(self.master, text=self.h_line_get())
         # *** Horizontal Lines ***
@@ -56,7 +56,7 @@ class TestInterface(tkinter.Frame):
         self.v_line = tkinter.IntVar()  # variable defining number of vertical lines
         self.vLineSliderText = Label(self.master, text="Number of vertical lines:")
 
-        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.v_line,
+        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=40, orient='horizontal', variable=self.v_line,
                                       command=self.v_line_changed)
         self.vLineSliderReading = Label(self.master, text=self.v_line_get())
         # *** Vertical Lines ***
@@ -83,7 +83,7 @@ class TestInterface(tkinter.Frame):
         self.line_spacing = tkinter.IntVar()
         self.lsSliderText = Label(self.master, text="Minimum Line Spacing:")
 
-        self.lsDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=self.line_spacing,
+        self.lsDisplay = ttk.Scale(self.master, from_=1, to=40, orient='horizontal', variable=self.line_spacing,
                                    command=self.ls_changed)
         self.lsSliderReading = Label(self.master, text=self.ls_get())
         # ***Line Spacing ***
@@ -155,6 +155,8 @@ class TestInterface(tkinter.Frame):
 
         self.hLineSliderReading.configure(background='LightGrey')
         self.hLineSliderReading.grid(row=1, column=2, padx=110, pady=(23, 0), sticky=NW)
+
+        self.hLineDisplay.set(10)
         # *** Horizontal Lines ***
 
         # *** Vertical Lines ***
@@ -165,6 +167,8 @@ class TestInterface(tkinter.Frame):
 
         self.vLineSliderReading.configure(background='LightGrey')
         self.vLineSliderReading.grid(row=1, column=2, padx=110, pady=(73, 0), sticky=NW)
+
+        self.vLineDisplay.set(10)
         # *** Vertical Lines ***
 
         # ** Color Distribution **
@@ -309,18 +313,75 @@ class TestInterface(tkinter.Frame):
             paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
                        width=1)
 
+            h_line_list = []
+            v_line_list = []
             i = 0
+
+            # Paint Horizontal Lines
             while i < int(float(self.h_line_get())):
+                different = False
                 random_pos = random.randrange(10, self.aspect_y - 10)
-                paint.line((10, random_pos, self.aspect_x - 10, random_pos),
-                           fill=(0, 0, 0), width=1)
-                i += 1
+
+                if i == 0:
+                    while not different:
+                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_y-int(float(self.ls_get())):
+                            different = True
+                        if different:
+                            paint.line((10, random_pos, self.aspect_x - 10, random_pos), fill=(0, 0, 0), width=1)
+                            h_line_list.append(random_pos)
+                        else:
+                            random_pos = random.randrange(10, self.aspect_x - 10)
+                    i += 1
+                else:
+                    while not different:
+                        for j in h_line_list:
+                            if random_pos > j+int(float(self.ls_get())):
+                                different = True
+                            elif random_pos < j-int(float(self.ls_get())):
+                                different = True
+                            else:
+                                different = False
+                                break
+
+                        if different:
+                            paint.line((10, random_pos, self.aspect_x - 10, random_pos), fill=(0, 0, 0), width=1)
+                            h_line_list.append(random_pos)
+                        else:
+                            random_pos = random.randrange(10, self.aspect_y - 10)
+                    i += 1
             i = 0
+
+            # Paint Vertical Lines
             while i < int(float(self.v_line_get())):
+                different = False
                 random_pos = random.randrange(10, self.aspect_x - 10)
-                paint.line((random_pos, 10, random_pos, self.aspect_y - 10),
-                           fill=(0, 0, 0), width=1)
-                i += 1
+
+                if i == 0:
+                    while not different:
+                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_x-int(float(self.ls_get())):
+                            different = True
+                        if different:
+                            paint.line((random_pos, 10, random_pos, self.aspect_y - 10), fill=(0, 0, 0), width=1)
+                            v_line_list.append(random_pos)
+                        else:
+                            random_pos = random.randrange(10, self.aspect_x - 10)
+                    i += 1
+                else:
+                    while not different:
+                        for j in v_line_list:
+                            if random_pos > j + int(float(self.ls_get())):
+                                different = True
+                            elif random_pos < j - int(float(self.ls_get())):
+                                different = True
+                            else:
+                                different = False
+                                break
+                        if different:
+                            paint.line((random_pos, 10, random_pos, self.aspect_y - 10), fill=(0, 0, 0), width=1)
+                            v_line_list.append(random_pos)
+                        else:
+                            random_pos = random.randrange(10, self.aspect_x - 10)
+                    i += 1
 
             # *** Detect Rectangles and apply color ***
 
@@ -370,5 +431,7 @@ class TestInterface(tkinter.Frame):
 
         self.photoImageNewImage = ImageTk.PhotoImage(new_image)
         self.imageTest = Label(self.master, image=self.photoImageNewImage)
-        self.imageTest.grid(row=1, column=1, padx=20, pady=(0, 0), sticky=W)
+        self.imageTest.grid(row=1, column=1, padx=20, pady=(0, 0), sticky=W)\
+
+        return new_image
 
