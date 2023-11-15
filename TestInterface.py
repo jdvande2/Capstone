@@ -74,7 +74,7 @@ class TestInterface(tkinter.Frame):
         self.line_thickness = tkinter.IntVar()
         self.ltSliderText = Label(self.master, text="Line Thickness:")
 
-        self.ltDisplay = ttk.Scale(self.master, from_=0, to=20, orient='horizontal', variable=self.line_thickness,
+        self.ltDisplay = ttk.Scale(self.master, from_=1, to=5, orient='horizontal', variable=self.line_thickness,
                                    command=self.lt_changed)
         self.ltSliderReading = Label(self.master, text=self.lt_get())
         # ***Line Thickness ***
@@ -83,7 +83,7 @@ class TestInterface(tkinter.Frame):
         self.line_spacing = tkinter.IntVar()
         self.lsSliderText = Label(self.master, text="Minimum Line Spacing:")
 
-        self.lsDisplay = ttk.Scale(self.master, from_=1, to=40, orient='horizontal', variable=self.line_spacing,
+        self.lsDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=self.line_spacing,
                                    command=self.ls_changed)
         self.lsSliderReading = Label(self.master, text=self.ls_get())
         # ***Line Spacing ***
@@ -205,7 +205,7 @@ class TestInterface(tkinter.Frame):
         self.lsSliderReading.configure(background='LightGrey')
         self.lsSliderReading.grid(row=1, column=2, padx=110, pady=(223, 0), sticky=NW)
 
-        self.lsDisplay.set(5)
+        self.lsDisplay.set(8)
         # *** Line Spacing ***
 
         # ** Generate Button **
@@ -317,7 +317,7 @@ class TestInterface(tkinter.Frame):
             v_line_list = []
             i = 0
 
-            # Paint Horizontal Lines
+            # Paint horizontal lines
             while i < int(float(self.h_line_get())):
                 different = False
                 random_pos = random.randrange(10, self.aspect_y - 10)
@@ -351,7 +351,7 @@ class TestInterface(tkinter.Frame):
                     i += 1
             i = 0
 
-            # Paint Vertical Lines
+            # Paint vertical lines
             while i < int(float(self.v_line_get())):
                 different = False
                 random_pos = random.randrange(10, self.aspect_x - 10)
@@ -383,7 +383,7 @@ class TestInterface(tkinter.Frame):
                             random_pos = random.randrange(10, self.aspect_x - 10)
                     i += 1
 
-            # *** Detect Rectangles and apply color ***
+            # *** Detect rectangles and apply color ***
 
             point_x = 10
             point_y = 10
@@ -428,6 +428,36 @@ class TestInterface(tkinter.Frame):
                     # Position at top of next rectangle set
                     while point_y != 10:
                         point_y -= 1
+
+            # *** Apply line thickness ***
+
+            # Thickify horizontal lines
+            for j in h_line_list:
+                paint.line((10, j, self.aspect_x - 10, j), fill=(0, 0, 1), width=int(float(self.lt_get())))
+            # Thickify vertical lines
+            for j in v_line_list:
+                paint.line((j, 10, j, self.aspect_y - 10), fill=(0, 0, 1), width=int(float(self.lt_get())))
+            # Thickify Boundary Box
+            paint.line((10, 10, self.aspect_x - 10, 10), fill=(0, 0, 1), width=int(float(self.lt_get())))
+            paint.line((10, self.aspect_y - 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 1),
+                       width=int(float(self.lt_get())))
+            paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 1), width=int(float(self.lt_get())))
+            paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 1),
+                       width=int(float(self.lt_get())))
+
+            # Repaint thin lines for testing
+            for j in h_line_list:
+                paint.line((10, j, self.aspect_x - 10, j), fill=(0, 0, 0), width=1)
+            for j in v_line_list:
+                paint.line((j, 10, j, self.aspect_y - 10), fill=(0, 0, 0), width=1)
+
+            paint.line((10, 10, self.aspect_x - 10, 10), fill=(0, 0, 0), width=1)
+            paint.line((10, self.aspect_y - 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
+                       width=1)
+            paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 0), width=1)
+            paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
+                       width=1)
+
 
         self.photoImageNewImage = ImageTk.PhotoImage(new_image)
         self.imageTest = Label(self.master, image=self.photoImageNewImage)
