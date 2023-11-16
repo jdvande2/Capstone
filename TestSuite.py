@@ -15,7 +15,7 @@ class TestSuite:
         TestInterface.aspect_x = 700
         TestInterface.aspect_y = 400
         # Line Spacing Default
-        TestInterface.line_spacing = 5
+        TestInterface.line_spacing = 15
 
         start_x = 10
         start_y = 10

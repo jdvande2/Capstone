@@ -47,7 +47,7 @@ class TestInterface(tkinter.Frame):
         self.h_line = tkinter.IntVar()  # variable defining number of horizontal lines
         self.hLineSliderText = Label(self.master, text="Number of horizontal lines:")
 
-        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=30, orient='horizontal', variable=self.h_line,
+        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=15, orient='horizontal', variable=self.h_line,
                                       command=self.h_line_changed)
         self.hLineSliderReading = Label(self.master, text=self.h_line_get())
         # *** Horizontal Lines ***
@@ -56,7 +56,7 @@ class TestInterface(tkinter.Frame):
         self.v_line = tkinter.IntVar()  # variable defining number of vertical lines
         self.vLineSliderText = Label(self.master, text="Number of vertical lines:")
 
-        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=40, orient='horizontal', variable=self.v_line,
+        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=20, orient='horizontal', variable=self.v_line,
                                       command=self.v_line_changed)
         self.vLineSliderReading = Label(self.master, text=self.v_line_get())
         # *** Vertical Lines ***
@@ -83,10 +83,28 @@ class TestInterface(tkinter.Frame):
         self.line_spacing = tkinter.IntVar()
         self.lsSliderText = Label(self.master, text="Minimum Line Spacing:")
 
-        self.lsDisplay = ttk.Scale(self.master, from_=1, to=10, orient='horizontal', variable=self.line_spacing,
+        self.lsDisplay = ttk.Scale(self.master, from_=10, to=20, orient='horizontal', variable=self.line_spacing,
                                    command=self.ls_changed)
         self.lsSliderReading = Label(self.master, text=self.ls_get())
         # ***Line Spacing ***
+
+        # *** Horizontal Rectangle Split Chance ***
+        self.hrsc = tkinter.IntVar()
+        self.hrscSliderText = Label(self.master, text="Horizontal Rectangle Split Chance (%):")
+
+        self.hrscDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.hrsc,
+                                     command=self.hrsc_changed)
+        self.hrscSliderReading = Label(self.master, text=self.hrsc_get())
+        # *** Horizontal Rectangle Split Chance ***
+
+        # *** Vertical Rectangle Split Chance ***
+        self.vrsc = tkinter.IntVar()
+        self.vrscSliderText = Label(self.master, text="Vertical Rectangle Split Chance (%):")
+
+        self.vrscDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.vrsc,
+                                     command=self.vrsc_changed)
+        self.vrscSliderReading = Label(self.master, text=self.vrsc_get())
+        # *** Vertical Rectangle Split Chance ***
 
         self.new_image = PIL.Image.new("RGB", (self.aspect_x, self.aspect_y), color=(255, 255, 255))
         self.photoImageNewImage = ImageTk.PhotoImage(self.new_image)
@@ -180,7 +198,7 @@ class TestInterface(tkinter.Frame):
         self.cdSliderReading.configure(background='LightGrey')
         self.cdSliderReading.grid(row=1, column=2, padx=110, pady=(123, 0), sticky=NW)
 
-        self.cdDisplay.set(5)
+        self.cdDisplay.set(6)
         # *** Color Distribution ***
 
         # *** Line Thickness ***
@@ -205,8 +223,32 @@ class TestInterface(tkinter.Frame):
         self.lsSliderReading.configure(background='LightGrey')
         self.lsSliderReading.grid(row=1, column=2, padx=110, pady=(223, 0), sticky=NW)
 
-        self.lsDisplay.set(8)
+        self.lsDisplay.set(15)
         # *** Line Spacing ***
+
+        # *** Horizontal Rectangle Split Chance ***
+        self.hrscSliderText.configure(background='LightGrey')
+        self.hrscSliderText.grid(row=1, column=2, padx=0, pady=(250, 0), sticky=NW)
+
+        self.hrscDisplay.grid(row=1, column=2, padx=3, pady=(270,0), sticky=NW)
+
+        self.hrscSliderReading.configure(background='LightGrey')
+        self.hrscSliderReading.grid(row=1, column=2, padx=110, pady=(273,0), sticky=NW)
+
+        self.hrscDisplay.set(50)
+        # *** Horizontal Rectangle Split Chance ***
+
+        # *** Vertical Rectangle Split Chance ***
+        self.vrscSliderText.configure(background='LightGrey')
+        self.vrscSliderText.grid(row=1, column=2, padx=0, pady=(300, 0), sticky=NW)
+
+        self.vrscDisplay.grid(row=1, column=2, padx=3, pady=(320, 0), sticky=NW)
+
+        self.vrscSliderReading.configure(background='LightGrey')
+        self.vrscSliderReading.grid(row=1, column=2, padx=110, pady=(323, 0), sticky=NW)
+
+        self.vrscDisplay.set(50)
+        # *** Vertical Rectangle Split Chance ***
 
         # ** Generate Button **
         self.generateButton.grid(row=1, column=2, padx=0, pady=(0, 0), sticky=SW)
@@ -257,6 +299,18 @@ class TestInterface(tkinter.Frame):
 
     def ls_changed(self, event):
         self.lsSliderReading.configure(text=self.ls_get())
+
+    def hrsc_get(self):
+        return '{: .2f}'.format(self.hrsc.get())
+
+    def hrsc_changed(self, event):
+        self.hrscSliderReading.configure(text=self.hrsc_get())
+
+    def vrsc_get(self):
+        return '{: .2f}'.format(self.vrsc.get())
+
+    def vrsc_changed(self, event):
+        self.vrscSliderReading.configure(text=self.vrsc_get())
 
     def delete_image(self):
         self.imagePresent.destroy()
@@ -313,24 +367,24 @@ class TestInterface(tkinter.Frame):
             paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
                        width=1)
 
-            h_line_list = []
-            v_line_list = []
+            h_line_list = [10, self.aspect_y-10]
+            v_line_list = [10, self.aspect_x-10]
             i = 0
 
             # Paint horizontal lines
             while i < int(float(self.h_line_get())):
                 different = False
-                random_pos = random.randrange(10, self.aspect_y - 10)
+                random_pos = random.randrange(11, self.aspect_y - 11)
 
                 if i == 0:
                     while not different:
-                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_y-int(float(self.ls_get())):
+                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_y-int(float(self.ls_get())) - 10:
                             different = True
                         if different:
                             paint.line((10, random_pos, self.aspect_x - 10, random_pos), fill=(0, 0, 0), width=1)
                             h_line_list.append(random_pos)
                         else:
-                            random_pos = random.randrange(10, self.aspect_x - 10)
+                            random_pos = random.randrange(11, self.aspect_y - 11)
                     i += 1
                 else:
                     while not different:
@@ -347,24 +401,24 @@ class TestInterface(tkinter.Frame):
                             paint.line((10, random_pos, self.aspect_x - 10, random_pos), fill=(0, 0, 0), width=1)
                             h_line_list.append(random_pos)
                         else:
-                            random_pos = random.randrange(10, self.aspect_y - 10)
+                            random_pos = random.randrange(11, self.aspect_y - 11)
                     i += 1
             i = 0
 
             # Paint vertical lines
             while i < int(float(self.v_line_get())):
                 different = False
-                random_pos = random.randrange(10, self.aspect_x - 10)
+                random_pos = random.randrange(11, self.aspect_x - 11)
 
                 if i == 0:
                     while not different:
-                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_x-int(float(self.ls_get())):
+                        if 10+int(float(self.ls_get())) < random_pos < self.aspect_x-int(float(self.ls_get())) - 10:
                             different = True
                         if different:
                             paint.line((random_pos, 10, random_pos, self.aspect_y - 10), fill=(0, 0, 0), width=1)
                             v_line_list.append(random_pos)
                         else:
-                            random_pos = random.randrange(10, self.aspect_x - 10)
+                            random_pos = random.randrange(11, self.aspect_x - 11)
                     i += 1
                 else:
                     while not different:
@@ -380,7 +434,7 @@ class TestInterface(tkinter.Frame):
                             paint.line((random_pos, 10, random_pos, self.aspect_y - 10), fill=(0, 0, 0), width=1)
                             v_line_list.append(random_pos)
                         else:
-                            random_pos = random.randrange(10, self.aspect_x - 10)
+                            random_pos = random.randrange(11, self.aspect_x - 11)
                     i += 1
 
             # *** Detect rectangles and apply color ***
@@ -390,6 +444,15 @@ class TestInterface(tkinter.Frame):
 
             # Starts top left of image
             while point_x != self.aspect_x - 10 and point_y != self.aspect_y - 10:
+                # Roll split chances
+                v_split_chance = False
+                if int(float(self.vrsc_get())) >= random.randrange(1, 100):
+                    v_split_chance = True
+                h_split_chance = False
+                if int(float(self.hrsc_get())) >= random.randrange(1, 100):
+                    h_split_chance = True
+                v_split_counter = 0
+                h_split_counter = 0
                 # Save top left position of rectangle
                 x_1 = point_x
                 y_1 = point_y
@@ -398,12 +461,39 @@ class TestInterface(tkinter.Frame):
                 point_y += 1
                 while new_image.getpixel((point_x + 1, point_y)) != (0, 0, 0):
                     point_y += 1
+                    h_split_counter += 1
+                # If rectangle must split horizontally
+                if h_split_chance:
+                    h_split_counter = h_split_counter // 2
+                    decision = random.randrange(0, 1)
+                    if decision == 0:
+                        h_split_y = point_y - random.randrange(5, h_split_counter)
+                    else:
+                        h_split_y = point_y + random.randrange(5, h_split_counter)
+                    split_x_1 = point_x
+                    split_x_2 = point_x
+                    # Find opposite line
+                    while new_image.getpixel((split_x_2+1, h_split_y)) != (0, 0, 0):
+                        split_x_2 += 1
                 # Position at bottom right of rectangle
                 point_x += 1
                 while new_image.getpixel((point_x, point_y + 1)) != (0, 0, 0) and new_image.getpixel(
                         (point_x, point_y - 1)) != (0, 0, 0):
                     point_x += 1
-
+                    v_split_counter += 1
+                # If rectangle must split vertically
+                if v_split_chance:
+                    v_split_counter = v_split_counter // 2
+                    decision = random.randrange(0, 1)
+                    if decision == 0:
+                        v_split_x = point_x - random.randrange(5, v_split_counter)
+                    else:
+                        v_split_x = point_x + random.randrange(5, v_split_counter)
+                    split_y_1 = point_y
+                    split_y_2 = point_y
+                    # Find opposite line
+                    while new_image.getpixel((v_split_x, split_y_2 - 1)) != (0, 0, 0):
+                        split_y_2 -= 1
                 # Save bottom right position of rectangle
                 x_2 = point_x
                 y_2 = point_y
@@ -411,6 +501,14 @@ class TestInterface(tkinter.Frame):
                 # Fill rectangle with color
                 paint.rectangle((x_1, y_1, x_2, y_2), fill=color_list[random.randrange(0, int(float(self.cd_get())))],
                                 outline=(0, 0, 0), width=1)
+                # Paint horizontal split chance
+                if h_split_chance:
+                    paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
+                               width=int(float(self.lt_get())))
+                # Paint vertical split chance
+                if v_split_chance:
+                    paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
+                               width=int(float(self.lt_get())))
 
                 # Position back to bottom right of rectangle
                 point_x -= 1
@@ -457,7 +555,6 @@ class TestInterface(tkinter.Frame):
             paint.line((10, 10, 10, self.aspect_y - 10), fill=(0, 0, 0), width=1)
             paint.line((self.aspect_x - 10, 10, self.aspect_x - 10, self.aspect_y - 10), fill=(0, 0, 0),
                        width=1)
-
 
         self.photoImageNewImage = ImageTk.PhotoImage(new_image)
         self.imageTest = Label(self.master, image=self.photoImageNewImage)
