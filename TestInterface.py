@@ -106,6 +106,15 @@ class TestInterface(tkinter.Frame):
         self.vrscSliderReading = Label(self.master, text=self.vrsc_get())
         # *** Vertical Rectangle Split Chance ***
 
+        # *** Neighboring Color Chance ***
+        self.ncc = tkinter.IntVar()
+        self.nccSliderText = Label(self.master, text="Neighboring color Chance (%):")
+
+        self.nccDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.ncc,
+                                     command=self.ncc_changed)
+        self.nccSliderReading = Label(self.master, text=self.ncc_get())
+        # *** Neighboring Color Chance ***
+
         self.new_image = PIL.Image.new("RGB", (self.aspect_x, self.aspect_y), color=(255, 255, 255))
         self.photoImageNewImage = ImageTk.PhotoImage(self.new_image)
         self.imageTest = Label(self.master, image=self.photoImageNewImage)
@@ -211,7 +220,7 @@ class TestInterface(tkinter.Frame):
         self.ltSliderReading.configure(background='LightGrey')
         self.ltSliderReading.grid(row=1, column=2, padx=110, pady=(173, 0), sticky=NW)
 
-        self.ltDisplay.set(5)
+        self.ltDisplay.set(3)
         # ***Line Thickness ***
 
         # *** Line Spacing ***
@@ -250,6 +259,14 @@ class TestInterface(tkinter.Frame):
         self.vrscDisplay.set(50)
         # *** Vertical Rectangle Split Chance ***
 
+        # *** Neighboring Color Chance ***
+        self.nccSliderText.configure(background='LightGrey')
+        self.nccSliderText.grid(row=1, column=2, padx=0, pady=(350, 0), sticky=NW)
+
+        self.nccDisplay.grid(row=1, column=2, padx=3, pady=(370, 0), sticky=NW)
+
+        self.nccSliderReading.configure(background='LightGrey')
+        self.nccSliderReading.grid(row=1, column=2, padx=110, pady=(373, 0), sticky=NW)
         # ** Generate Button **
         self.generateButton.grid(row=1, column=2, padx=0, pady=(0, 0), sticky=SW)
 
@@ -312,6 +329,12 @@ class TestInterface(tkinter.Frame):
     def vrsc_changed(self, event):
         self.vrscSliderReading.configure(text=self.vrsc_get())
 
+    def ncc_get(self):
+        return '{: .2f}'.format(self.ncc.get())
+
+    def ncc_changed(self, event):
+        self.nccSliderReading.configure(text=self.ncc_get())
+
     def delete_image(self):
         self.imagePresent.destroy()
 
@@ -341,6 +364,12 @@ class TestInterface(tkinter.Frame):
         self.delete_image()
         default_image_url = 'https://i.imgur.com/86DUwF5.png'
         self.create_url_image(default_image_url)
+
+    def get_neighbor_chance(self):
+        if int(float(self.ncc_get())) >= random.randrange(1, 100):
+            return True
+        else:
+            return False
 
     def generate_image(self):
         self.delete_image()
@@ -441,6 +470,7 @@ class TestInterface(tkinter.Frame):
 
             point_x = 10
             point_y = 10
+            rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
 
             # Starts top left of image
             while point_x != self.aspect_x - 10 and point_y != self.aspect_y - 10:
@@ -498,17 +528,54 @@ class TestInterface(tkinter.Frame):
                 x_2 = point_x
                 y_2 = point_y
 
-                # Fill rectangle with color
-                paint.rectangle((x_1, y_1, x_2, y_2), fill=color_list[random.randrange(0, int(float(self.cd_get())))],
-                                outline=(0, 0, 0), width=1)
-                # Paint horizontal split chance
-                if h_split_chance:
+                if not self.get_neighbor_chance():
+                    rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+
+                # Fill rectangles with color
+                paint.rectangle((x_1, y_1, x_2, y_2), fill=rect_color, outline=(0, 0, 0), width=1)
+                # Paint both splits at once
+                if h_split_chance and v_split_chance:
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((split_x_1+1+(int(float(self.lt_get()))//2),
+                                     split_y_2+(int(float(self.lt_get()))//2),
+                                     v_split_x-(int(float(self.lt_get()))//2),
+                                     h_split_y-(int(float(self.lt_get()))//2)), fill=rect_color, outline=rect_color,
+                                    width=1)
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((v_split_x+(int(float(self.lt_get()))//2), split_y_2+(int(float(self.lt_get()))//2),
+                                     point_x-(int(float(self.lt_get()))//2), h_split_y-(int(float(self.lt_get()))//2)),
+                                    fill=rect_color, outline=rect_color, width=1)
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((v_split_x+(int(float(self.lt_get()))//2), h_split_y+(int(float(self.lt_get()))//2),
+                                     point_x-(int(float(self.lt_get()))//2), point_y-(int(float(self.lt_get()))//2)),
+                                    fill=rect_color, outline=rect_color, width=1)
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
-                # Paint vertical split chance
-                if v_split_chance:
                     paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
+                # Paint horizontal split
+                elif h_split_chance and not v_split_chance:
+                    paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
+                               width=int(float(self.lt_get())))
+                    h_split_corner = h_split_y+h_split_counter
+                    if h_split_corner >= self.aspect_y - 10:
+                        h_split_corner = self.aspect_y - 10 - (int(float(self.lt_get()))//2)
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((split_x_1+1, h_split_y+1+(int(float(self.lt_get()))//2),
+                                     split_x_2, h_split_corner), fill=rect_color, outline=rect_color, width=1)
+                # Paint vertical split
+                elif v_split_chance and not h_split_chance:
+                    paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
+                               width=int(float(self.lt_get())))
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((v_split_x+1+(int(float(self.lt_get()))//2), split_y_2+1,
+                                     point_x-1-(int(float(self.lt_get()))//2), point_y-1), fill=rect_color,
+                                    outline=rect_color, width=1)
 
                 # Position back to bottom right of rectangle
                 point_x -= 1

@@ -47,7 +47,7 @@ class TestSuite:
         TestInterface.aspect_x = 700
         TestInterface.aspect_y = 400
         # Line Thickness Default
-        TestInterface.line_thickness = 5
+        TestInterface.line_thickness = 3
 
         start_x = 8
         start_y = 8
