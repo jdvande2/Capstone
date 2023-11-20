@@ -123,6 +123,8 @@ class TestInterface(tkinter.Frame):
 
         self.resetButton = Button(self.master, text="Reset Image", command=self.no_image_image)
 
+        self.randomButton = Button(self.master, text="Random", command=self.set_random)
+
         self.default_url_image()  # present default image on startup
 
         self.aspectPresent = Label(self.master)
@@ -273,6 +275,9 @@ class TestInterface(tkinter.Frame):
         # ** Reset Button **
         self.resetButton.grid(row=1, column=2, padx=65, pady=(0, 0), sticky=SW)
 
+        # ** Random Button **
+        self.randomButton.grid(row=1, column=2, padx=150, pady=(0, 0), sticky=SW)
+
     def set_aspect(self, x, y):
         self.aspect_x = x
         self.aspect_y = y
@@ -370,6 +375,16 @@ class TestInterface(tkinter.Frame):
             return True
         else:
             return False
+
+    def set_random(self):
+        self.hLineDisplay.set(random.randrange(0, 15))
+        self.vLineDisplay.set(random.randrange(0, 20))
+        self.cdDisplay.set(random.randrange(1, 10))
+        self.ltDisplay.set(random.randrange(1, 5))
+        self.lsDisplay.set(random.randrange(10, 20))
+        self.hrscDisplay.set(random.randrange(0, 100))
+        self.vrscDisplay.set(random.randrange(0, 100))
+        self.hrscDisplay.set(random.randrange(0, 100))
 
     def generate_image(self):
         self.delete_image()
@@ -573,7 +588,7 @@ class TestInterface(tkinter.Frame):
                                width=int(float(self.lt_get())))
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((v_split_x+1+(int(float(self.lt_get()))//2), split_y_2+1,
+                    paint.rectangle((v_split_x+1+(int(float(self.lt_get()))//2), split_y_2-1,
                                      point_x-1-(int(float(self.lt_get()))//2), point_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
 
