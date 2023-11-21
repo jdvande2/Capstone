@@ -552,21 +552,16 @@ class TestInterface(tkinter.Frame):
                 if h_split_chance and v_split_chance:
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((split_x_1+1+(int(float(self.lt_get()))//2),
-                                     split_y_2+(int(float(self.lt_get()))//2),
-                                     v_split_x-(int(float(self.lt_get()))//2),
-                                     h_split_y-(int(float(self.lt_get()))//2)), fill=rect_color, outline=rect_color,
-                                    width=1)
+                    paint.rectangle((split_x_1+1, split_y_2+1, v_split_x-1, h_split_y-1), fill=rect_color,
+                                    outline=rect_color, width=1)
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((v_split_x+(int(float(self.lt_get()))//2), split_y_2+(int(float(self.lt_get()))//2),
-                                     point_x-(int(float(self.lt_get()))//2), h_split_y-(int(float(self.lt_get()))//2)),
-                                    fill=rect_color, outline=rect_color, width=1)
+                    paint.rectangle((v_split_x+1, split_y_2+1, point_x-1, h_split_y-1), fill=rect_color,
+                                    outline=rect_color, width=1)
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((v_split_x+(int(float(self.lt_get()))//2), h_split_y+(int(float(self.lt_get()))//2),
-                                     point_x-(int(float(self.lt_get()))//2), point_y-(int(float(self.lt_get()))//2)),
-                                    fill=rect_color, outline=rect_color, width=1)
+                    paint.rectangle((v_split_x+1, h_split_y+1, point_x-1, point_y-1), fill=rect_color,
+                                    outline=rect_color, width=1)
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
                     paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
