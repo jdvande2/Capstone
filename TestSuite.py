@@ -35,6 +35,7 @@ class TestSuite:
                 start_x += 1
 
             assert total_v_lines == v_line_count
+            total_tests += 1
 
     def test_h_line_count(self):
         h_line_test = TestInterface()
@@ -48,12 +49,13 @@ class TestSuite:
 
             h_test_image = h_line_test.generate_image()
             total_h_lines = 0
-            while start_x < h_line_test.aspect_y - 11:
+            while start_y < h_line_test.aspect_y - 11:
                 if h_test_image.getpixel((start_x, start_y)) == (0, 0, 0):
                     total_h_lines += 1
                 start_y += 1
 
             assert total_h_lines == h_line_count
+            total_tests += 1
 
     def test_line_spacing(self):
         ls_test = TestInterface()
@@ -87,7 +89,7 @@ class TestSuite:
 
                 start_y += 1
                 separation_count += 1
-        total_tests += 1
+            total_tests += 1
 
     def test_line_thickness(self):
         lt_test = TestInterface()

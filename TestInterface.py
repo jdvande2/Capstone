@@ -47,7 +47,7 @@ class TestInterface(tkinter.Frame):
         self.h_line = tkinter.IntVar()  # variable defining number of horizontal lines
         self.hLineSliderText = Label(self.master, text="Number of horizontal lines:")
 
-        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=15, orient='horizontal', variable=self.h_line,
+        self.hLineDisplay = ttk.Scale(self.master, from_=0, to=10, orient='horizontal', variable=self.h_line,
                                       command=self.h_line_changed)
         self.hLineSliderReading = Label(self.master, text=self.h_line_get())
         # *** Horizontal Lines ***
@@ -56,7 +56,7 @@ class TestInterface(tkinter.Frame):
         self.v_line = tkinter.IntVar()  # variable defining number of vertical lines
         self.vLineSliderText = Label(self.master, text="Number of vertical lines:")
 
-        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=20, orient='horizontal', variable=self.v_line,
+        self.vLineDisplay = ttk.Scale(self.master, from_=0, to=15, orient='horizontal', variable=self.v_line,
                                       command=self.v_line_changed)
         self.vLineSliderReading = Label(self.master, text=self.v_line_get())
         # *** Vertical Lines ***
@@ -83,7 +83,7 @@ class TestInterface(tkinter.Frame):
         self.line_spacing = tkinter.IntVar()
         self.lsSliderText = Label(self.master, text="Minimum Line Spacing:")
 
-        self.lsDisplay = ttk.Scale(self.master, from_=10, to=20, orient='horizontal', variable=self.line_spacing,
+        self.lsDisplay = ttk.Scale(self.master, from_=15, to=20, orient='horizontal', variable=self.line_spacing,
                                    command=self.ls_changed)
         self.lsSliderReading = Label(self.master, text=self.ls_get())
         # ***Line Spacing ***
@@ -234,17 +234,17 @@ class TestInterface(tkinter.Frame):
         self.lsSliderReading.configure(background='LightGrey')
         self.lsSliderReading.grid(row=1, column=2, padx=110, pady=(223, 0), sticky=NW)
 
-        self.lsDisplay.set(15)
+        self.lsDisplay.set(20)
         # *** Line Spacing ***
 
         # *** Horizontal Rectangle Split Chance ***
         self.hrscSliderText.configure(background='LightGrey')
         self.hrscSliderText.grid(row=1, column=2, padx=0, pady=(250, 0), sticky=NW)
 
-        self.hrscDisplay.grid(row=1, column=2, padx=3, pady=(270,0), sticky=NW)
+        self.hrscDisplay.grid(row=1, column=2, padx=3, pady=(270, 0), sticky=NW)
 
         self.hrscSliderReading.configure(background='LightGrey')
-        self.hrscSliderReading.grid(row=1, column=2, padx=110, pady=(273,0), sticky=NW)
+        self.hrscSliderReading.grid(row=1, column=2, padx=110, pady=(273, 0), sticky=NW)
 
         self.hrscDisplay.set(50)
         # *** Horizontal Rectangle Split Chance ***
@@ -377,11 +377,11 @@ class TestInterface(tkinter.Frame):
             return False
 
     def set_random(self):
-        self.hLineDisplay.set(random.randrange(0, 15))
-        self.vLineDisplay.set(random.randrange(0, 20))
+        self.hLineDisplay.set(random.randrange(0, 10))
+        self.vLineDisplay.set(random.randrange(0, 15))
         self.cdDisplay.set(random.randrange(1, 10))
         self.ltDisplay.set(random.randrange(1, 5))
-        self.lsDisplay.set(random.randrange(10, 20))
+        self.lsDisplay.set(random.randrange(15, 20))
         self.hrscDisplay.set(random.randrange(0, 100))
         self.vrscDisplay.set(random.randrange(0, 100))
         self.hrscDisplay.set(random.randrange(0, 100))
@@ -573,24 +573,20 @@ class TestInterface(tkinter.Frame):
                                width=int(float(self.lt_get())))
                 # Paint horizontal split
                 elif h_split_chance and not v_split_chance:
+                    if not self.get_neighbor_chance():
+                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    paint.rectangle((split_x_1+1, h_split_y+1, point_x - 1, point_y - 1),
+                                    fill=rect_color, outline=rect_color, width=1)
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
-                    h_split_corner = h_split_y+h_split_counter
-                    if h_split_corner >= self.aspect_y - 10:
-                        h_split_corner = self.aspect_y - 10 - (int(float(self.lt_get()))//2)
-                    if not self.get_neighbor_chance():
-                        rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((split_x_1+1, h_split_y+1+(int(float(self.lt_get()))//2),
-                                     split_x_2, h_split_corner), fill=rect_color, outline=rect_color, width=1)
                 # Paint vertical split
                 elif v_split_chance and not h_split_chance:
-                    paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
-                               width=int(float(self.lt_get())))
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
-                    paint.rectangle((v_split_x+1+(int(float(self.lt_get()))//2), split_y_2-1,
-                                     point_x-1-(int(float(self.lt_get()))//2), point_y-1), fill=rect_color,
+                    paint.rectangle((v_split_x+1, split_y_2, point_x-1, point_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
+                    paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
+                               width=int(float(self.lt_get())))
 
                 # Position back to bottom right of rectangle
                 point_x -= 1
