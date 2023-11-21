@@ -18,10 +18,6 @@ class TestInterface(tkinter.Frame):
         self.img = None
         self.parent = parent
 
-        #self.parent.title("local")
-        #self.parent.geometry("1250x500")
-        #self.parent.configure(background='LightGrey')
-
         self.overallSettingsLabel = Label(self.master, text="Image settings:")
 
         self.imageText = Label(self.master, text="Image result:")
@@ -108,12 +104,21 @@ class TestInterface(tkinter.Frame):
 
         # *** Neighboring Color Chance ***
         self.ncc = tkinter.IntVar()
-        self.nccSliderText = Label(self.master, text="Neighboring color Chance (%):")
+        self.nccSliderText = Label(self.master, text="Neighboring Color Chance (%):")
 
         self.nccDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.ncc,
-                                     command=self.ncc_changed)
+                                    command=self.ncc_changed)
         self.nccSliderReading = Label(self.master, text=self.ncc_get())
         # *** Neighboring Color Chance ***
+
+        # *** White Rectangle Chance ***
+        self.wrc = tkinter.IntVar()
+        self.wrcSliderText = Label(self.master, text="White Rectangle Chance (%):")
+
+        self.wrcDisplay = ttk.Scale(self.master, from_=0, to=100, orient='horizontal', variable=self.wrc,
+                                    command=self.wrc_changed)
+        self.wrcSliderReading = Label(self.master, text=self.wrc_get())
+        # *** White Rectangle Chance ***
 
         self.new_image = PIL.Image.new("RGB", (self.aspect_x, self.aspect_y), color=(255, 255, 255))
         self.photoImageNewImage = ImageTk.PhotoImage(self.new_image)
@@ -209,7 +214,7 @@ class TestInterface(tkinter.Frame):
         self.cdSliderReading.configure(background='LightGrey')
         self.cdSliderReading.grid(row=1, column=2, padx=110, pady=(123, 0), sticky=NW)
 
-        self.cdDisplay.set(6)
+        self.cdDisplay.set(5)
         # *** Color Distribution ***
 
         # *** Line Thickness ***
@@ -269,14 +274,26 @@ class TestInterface(tkinter.Frame):
 
         self.nccSliderReading.configure(background='LightGrey')
         self.nccSliderReading.grid(row=1, column=2, padx=110, pady=(373, 0), sticky=NW)
+        # *** Neighboring Color Chance ***
+
+        # *** White Rectangle Chance ***
+        self.wrcSliderText.configure(background='LightGrey')
+        self.wrcSliderText.grid(row=1, column=2, padx=0, pady=(400, 0), sticky=NW)
+
+        self.wrcDisplay.grid(row=1, column=2, padx=3, pady=(420, 0), sticky=NW)
+
+        self.wrcSliderReading.configure(background='LightGrey')
+        self.wrcSliderReading.grid(row=1, column=2, padx=110, pady=(423, 0), sticky=NW)
+        # *** White Rectangle Chance ***
+
         # ** Generate Button **
-        self.generateButton.grid(row=1, column=2, padx=0, pady=(0, 0), sticky=SW)
+        self.generateButton.grid(row=1, column=2, padx=0, pady=(450, 0), sticky=SW)
 
         # ** Reset Button **
-        self.resetButton.grid(row=1, column=2, padx=65, pady=(0, 0), sticky=SW)
+        self.resetButton.grid(row=1, column=2, padx=65, pady=(450, 0), sticky=SW)
 
         # ** Random Button **
-        self.randomButton.grid(row=1, column=2, padx=150, pady=(0, 0), sticky=SW)
+        self.randomButton.grid(row=1, column=2, padx=150, pady=(400, 0), sticky=SW)
 
     def set_aspect(self, x, y):
         self.aspect_x = x
@@ -340,6 +357,12 @@ class TestInterface(tkinter.Frame):
     def ncc_changed(self, event):
         self.nccSliderReading.configure(text=self.ncc_get())
 
+    def wrc_get(self):
+        return '{: .2f}'.format(self.wrc.get())
+
+    def wrc_changed(self, event):
+        self.wrcSliderReading.configure(text=self.wrc_get())
+
     def delete_image(self):
         self.imagePresent.destroy()
 
@@ -376,6 +399,12 @@ class TestInterface(tkinter.Frame):
         else:
             return False
 
+    def get_white_chance(self):
+        if int(float(self.wrc_get())) <= random.randrange(1, 100):
+            return True
+        else:
+            return False
+
     def set_random(self):
         self.hLineDisplay.set(random.randrange(0, 10))
         self.vLineDisplay.set(random.randrange(0, 15))
@@ -384,7 +413,8 @@ class TestInterface(tkinter.Frame):
         self.lsDisplay.set(random.randrange(15, 20))
         self.hrscDisplay.set(random.randrange(0, 100))
         self.vrscDisplay.set(random.randrange(0, 100))
-        self.hrscDisplay.set(random.randrange(0, 100))
+        self.nccDisplay.set(random.randrange(0, 100))
+        self.wrcDisplay.set(random.randrange(0, 100))
 
     def generate_image(self):
         self.delete_image()
@@ -394,10 +424,9 @@ class TestInterface(tkinter.Frame):
             paint = ImageDraw.Draw(canvas)
             # *** Create color list and populate it ***
             # First six colors are colors from Mondrian's original works always
-            color_list = [(45, 45, 46), (179, 34, 48), (42, 66, 106), (164, 167, 209), (240, 211, 45), (255, 255,
-                                                                                                        255)]
+            color_list = [(45, 45, 46), (179, 34, 48), (42, 66, 106), (164, 167, 209), (240, 211, 45)]
             i = 0
-            while i < 4:
+            while i < 5:
                 color_list.append(((random.randrange(0, 255)), (random.randrange(0, 255)),
                                    (random.randrange(0, 255))))
                 i += 1
@@ -545,6 +574,8 @@ class TestInterface(tkinter.Frame):
 
                 if not self.get_neighbor_chance():
                     rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                if not self.get_white_chance():
+                    rect_color = (255, 255, 255)
 
                 # Fill rectangles with color
                 paint.rectangle((x_1, y_1, x_2, y_2), fill=rect_color, outline=(0, 0, 0), width=1)
@@ -552,14 +583,20 @@ class TestInterface(tkinter.Frame):
                 if h_split_chance and v_split_chance:
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    if not self.get_white_chance():
+                        rect_color = (255, 255, 255)
                     paint.rectangle((split_x_1+1, split_y_2+1, v_split_x-1, h_split_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    if not self.get_white_chance():
+                        rect_color = (255, 255, 255)
                     paint.rectangle((v_split_x+1, split_y_2+1, point_x-1, h_split_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    if not self.get_white_chance():
+                        rect_color = (255, 255, 255)
                     paint.rectangle((v_split_x+1, h_split_y+1, point_x-1, point_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
@@ -570,6 +607,8 @@ class TestInterface(tkinter.Frame):
                 elif h_split_chance and not v_split_chance:
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    if not self.get_white_chance():
+                        rect_color = (255, 255, 255)
                     paint.rectangle((split_x_1+1, h_split_y+1, point_x - 1, point_y - 1),
                                     fill=rect_color, outline=rect_color, width=1)
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
@@ -578,6 +617,8 @@ class TestInterface(tkinter.Frame):
                 elif v_split_chance and not h_split_chance:
                     if not self.get_neighbor_chance():
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+                    if not self.get_white_chance():
+                        rect_color = (255, 255, 255)
                     paint.rectangle((v_split_x+1, split_y_2, point_x-1, point_y-1), fill=rect_color,
                                     outline=rect_color, width=1)
                     paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
