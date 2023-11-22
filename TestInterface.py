@@ -128,7 +128,7 @@ class TestInterface(tkinter.Frame):
 
         self.resetButton = Button(self.master, text="Reset Image", command=self.no_image_image)
 
-        self.randomButton = Button(self.master, text="Random", command=self.set_random)
+        self.randomButton = Button(self.master, text="Random", command=self.random_gen)
 
         self.default_url_image()  # present default image on startup
 
@@ -415,6 +415,10 @@ class TestInterface(tkinter.Frame):
         self.vrscDisplay.set(random.randrange(0, 100))
         self.nccDisplay.set(random.randrange(0, 100))
         self.wrcDisplay.set(random.randrange(0, 100))
+
+    def random_gen(self):
+        self.set_random()
+        self.generate_image()
 
     def generate_image(self):
         self.delete_image()
