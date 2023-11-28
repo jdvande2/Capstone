@@ -519,6 +519,7 @@ class TestInterface(tkinter.Frame):
             point_x = 10
             point_y = 10
             rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
+            painted_white = False
 
             # Starts top left of image
             while point_x != self.aspect_x - 10 and point_y != self.aspect_y - 10:
@@ -576,55 +577,77 @@ class TestInterface(tkinter.Frame):
                 x_2 = point_x
                 y_2 = point_y
 
-                if not self.get_neighbor_chance():
+                if not self.get_neighbor_chance() or painted_white:
                     rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                 if not self.get_white_chance():
-                    rect_color = (255, 255, 255)
-
-                # Fill rectangles with color
-                paint.rectangle((x_1, y_1, x_2, y_2), fill=rect_color, outline=(0, 0, 0), width=1)
+                    paint.rectangle((x_1, y_1, x_2, y_2), fill=(255, 255, 255), outline=(0, 0, 0), width=1)
+                    painted_white = True
+                else:
+                    # Fill rectangles with color
+                    paint.rectangle((x_1, y_1, x_2, y_2), fill=rect_color, outline=(0, 0, 0), width=1)
+                    painted_white = False
                 # Paint both splits at once
                 if h_split_chance and v_split_chance:
-                    if not self.get_neighbor_chance():
+                    if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        rect_color = (255, 255, 255)
-                    paint.rectangle((split_x_1+1, split_y_2+1, v_split_x-1, h_split_y-1), fill=rect_color,
-                                    outline=rect_color, width=1)
-                    if not self.get_neighbor_chance():
+                        paint.rectangle((split_x_1 + 1, split_y_2 + 1, v_split_x - 1, h_split_y - 1), fill=(255, 255, 255),
+                                        outline=(255, 255, 255), width=1)
+                        painted_white = True
+                    else:
+                        paint.rectangle((split_x_1+1, split_y_2+1, v_split_x-1, h_split_y-1), fill=rect_color,
+                                        outline=rect_color, width=1)
+                        painted_white = False
+                    if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        rect_color = (255, 255, 255)
-                    paint.rectangle((v_split_x+1, split_y_2+1, point_x-1, h_split_y-1), fill=rect_color,
-                                    outline=rect_color, width=1)
-                    if not self.get_neighbor_chance():
+                        paint.rectangle((v_split_x + 1, split_y_2 + 1, point_x - 1, h_split_y - 1), fill=(255, 255, 255),
+                                        outline=(255, 255, 255), width=1)
+                        painted_white = True
+                    else:
+                        paint.rectangle((v_split_x+1, split_y_2+1, point_x-1, h_split_y-1), fill=rect_color,
+                                        outline=rect_color, width=1)
+                        painted_white = False
+                    if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        rect_color = (255, 255, 255)
-                    paint.rectangle((v_split_x+1, h_split_y+1, point_x-1, point_y-1), fill=rect_color,
-                                    outline=rect_color, width=1)
+                        paint.rectangle((v_split_x + 1, h_split_y + 1, point_x - 1, point_y - 1), fill=(255, 255, 255),
+                                        outline=(255, 255, 255), width=1)
+                        painted_white = True
+                    else:
+                        paint.rectangle((v_split_x+1, h_split_y+1, point_x-1, point_y-1), fill=rect_color,
+                                        outline=rect_color, width=1)
+                        painted_white = False
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
                     paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
                 # Paint horizontal split
                 elif h_split_chance and not v_split_chance:
-                    if not self.get_neighbor_chance():
+                    if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        rect_color = (255, 255, 255)
-                    paint.rectangle((split_x_1+1, h_split_y+1, point_x - 1, point_y - 1),
-                                    fill=rect_color, outline=rect_color, width=1)
+                        paint.rectangle((split_x_1 + 1, h_split_y + 1, point_x - 1, point_y - 1),
+                                        fill=(255, 255, 255), outline=(255, 255, 255), width=1)
+                        painted_white = True
+                    else:
+                        paint.rectangle((split_x_1+1, h_split_y+1, point_x - 1, point_y - 1),
+                                        fill=rect_color, outline=rect_color, width=1)
+                        painted_white = False
                     paint.line((split_x_1 + 1, h_split_y, split_x_2, h_split_y), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
                 # Paint vertical split
                 elif v_split_chance and not h_split_chance:
-                    if not self.get_neighbor_chance():
+                    if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        rect_color = (255, 255, 255)
-                    paint.rectangle((v_split_x+1, split_y_2, point_x-1, point_y-1), fill=rect_color,
-                                    outline=rect_color, width=1)
+                        paint.rectangle((v_split_x + 1, split_y_2, point_x - 1, point_y - 1), fill=(255, 255, 255),
+                                        outline=(255, 255, 255), width=1)
+                        painted_white = True
+                    else:
+                        paint.rectangle((v_split_x+1, split_y_2, point_x-1, point_y-1), fill=rect_color,
+                                        outline=rect_color, width=1)
+                        painted_white = False
                     paint.line((v_split_x, split_y_1 - 1, v_split_x, split_y_2), fill=(0, 1, 0),
                                width=int(float(self.lt_get())))
 
