@@ -591,21 +591,21 @@ class TestInterface(tkinter.Frame):
                     if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        paint.rectangle((split_x_1 + 1, split_y_2 + 1, v_split_x - 1, h_split_y - 1), fill=(255, 255, 255),
+                        paint.rectangle((split_x_1 + 1, split_y_2, v_split_x - 1, h_split_y - 1), fill=(255, 255, 255),
                                         outline=(255, 255, 255), width=1)
                         painted_white = True
                     else:
-                        paint.rectangle((split_x_1+1, split_y_2+1, v_split_x-1, h_split_y-1), fill=rect_color,
+                        paint.rectangle((split_x_1+1, split_y_2, v_split_x-1, h_split_y-1), fill=rect_color,
                                         outline=rect_color, width=1)
                         painted_white = False
                     if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        paint.rectangle((v_split_x + 1, split_y_2 + 1, point_x - 1, h_split_y - 1), fill=(255, 255, 255),
+                        paint.rectangle((v_split_x + 1, split_y_2, point_x - 1, h_split_y - 1), fill=(255, 255, 255),
                                         outline=(255, 255, 255), width=1)
                         painted_white = True
                     else:
-                        paint.rectangle((v_split_x+1, split_y_2+1, point_x-1, h_split_y-1), fill=rect_color,
+                        paint.rectangle((v_split_x+1, split_y_2, point_x-1, h_split_y-1), fill=rect_color,
                                         outline=rect_color, width=1)
                         painted_white = False
                     if not self.get_neighbor_chance() or painted_white:
@@ -627,7 +627,7 @@ class TestInterface(tkinter.Frame):
                     if not self.get_neighbor_chance() or painted_white:
                         rect_color = color_list[random.randrange(0, int(float(self.cd_get())))]
                     if not self.get_white_chance():
-                        paint.rectangle((split_x_1 + 1, h_split_y + 1, point_x - 1, point_y - 1),
+                        paint.rectangle((split_x_1 + 1, h_split_y+1, point_x - 1, point_y - 1),
                                         fill=(255, 255, 255), outline=(255, 255, 255), width=1)
                         painted_white = True
                     else:
