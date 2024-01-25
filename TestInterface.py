@@ -8,6 +8,7 @@ import PIL
 from PIL import ImageTk, Image, ImageDraw
 
 import random
+import os
 
 
 class TestInterface(tkinter.Frame):
@@ -422,6 +423,7 @@ class TestInterface(tkinter.Frame):
 
     def generate_image(self):
         self.delete_image()
+        os.remove("SaveHere/image.png")
         new_image = PIL.Image.new("RGB", (self.aspect_x, self.aspect_y), color=(255, 255, 255))
 
         with (new_image as canvas):
@@ -700,6 +702,8 @@ class TestInterface(tkinter.Frame):
         self.photoImageNewImage = ImageTk.PhotoImage(new_image)
         self.imageTest = Label(self.master, image=self.photoImageNewImage)
         self.imageTest.grid(row=1, column=1, padx=20, pady=(0, 0), sticky=W)\
+
+        new_image.save("SaveHere/image.png")
 
         return new_image
 

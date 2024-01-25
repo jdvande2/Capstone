@@ -6,6 +6,7 @@ from PIL import ImageTk, Image, ImageDraw
 from TestInterface import TestInterface
 
 import pytest
+import os
 
 
 class TestSuite:
@@ -139,4 +140,13 @@ class TestSuite:
 
             total_tests += 1
 
+    def test_image_saved(self):
+        is_test = TestInterface()
+        is_test.generate_image()
 
+        did_save = False
+
+        if os.path.isfile("SaveHere/image.png"):
+            did_save = True
+
+        assert did_save
